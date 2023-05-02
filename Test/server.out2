@@ -1,0 +1,67 @@
+[main] port 2747 bound to server socket
+[0] started
+[0] Received message (9 chars):
+LABEL Rab
+[0] sent acknowledgment
+[0] Received message (14 chars):
+MSG First line
+First line
+[0] sent acknowledgment
+[0] Received message (23 chars):
+MSG this is second line
+this is second line
+[0] sent acknowledgment
+[0] Received message (9 chars):
+MSG final
+final
+[0] sent acknowledgment
+[0] Received message (4 chars):
+MSG 
+
+[0] sent acknowledgment
+index	id	IP addr	label
+0	0	130.71.50.25	Rab
+
+[1] started
+[1] Received message (12 chars):
+LABEL Client
+[1] sent acknowledgment
+[1] Received message (14 chars):
+MSG First line
+First line
+[1] sent acknowledgment
+[1] Received message (23 chars):
+MSG this is second line
+this is second line
+[1] sent acknowledgment
+[1] Received message (9 chars):
+MSG final
+final
+[1] sent acknowledgment
+[1] Received message (4 chars):
+MSG 
+
+[1] sent acknowledgment
+index	id	IP addr	label
+0	0	130.71.50.25	Rab
+1	1	162.210.91.19	Client
+
+[0] Received message (4 chars):
+DONE
+[0] sent termination message
+[0] Received END from client Rab
+[main] joining on [0]
+[main] join on [0] accomplished
+index	id	IP addr	label
+1	1	162.210.91.19	Client
+
+[1] Received message (4 chars):
+DONE
+[1] sent termination message
+[1] Received END from client Client
+[main] joining on [1]
+[main] join on [1] accomplished
+index	id	IP addr	label
+
+[command thread] EXIT encountered
+[main] command thread join accomplished

@@ -1,0 +1,49 @@
+#!/bin/bash
+# test script for server and two clients
+
+TDIR=$HOME/t/Stogit/sd/c/sockets/Test
+
+CHOST=localhost
+C2HOST=rns202-2.cs.stolaf.edu
+SHOST=rns202-21.cs.stolaf.edu
+
+SPORT=2747
+TPORT=2757
+
+cd $TDIR
+
+ssh $SHOST "cd $TDIR ; ./testreceiver $TPORT | ../server $SPORT | diff - server.out2 > server.out2.diff" < /dev/null &
+sleep 1
+
+./testreceiver $TPORT | ../client $SHOST $SPORT | diff - client.out1 > client1.out2.diff &
+sleep 1
+
+cat client.in | ./testsend client 
+sleep 1
+
+./testsend server DUMP
+sleep 1
+
+ssh $C2HOST "cd $TDIR ; ./testreceiver $TPORT | ../client $SHOST $SPORT | diff - client2.out2 > client2.out2.diff" < /dev/null &
+sleep 1
+
+cat client.in | ./testsend client2
+sleep 1
+
+./testsend server DUMP
+sleep 1
+
+./testsend client DONE
+./testsend client END_TESTRECEIVER
+sleep 1
+
+./testsend server DUMP
+sleep 1
+
+./testsend client2 DONE
+./testsend client2 END_TESTRECEIVER
+sleep 1
+
+./testsend server DUMP
+./testsend server EXIT
+./testsend server END_TESTRECEIVER

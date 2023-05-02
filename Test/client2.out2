@@ -1,0 +1,20 @@
+Label: Client
+Connected.
+LABEL message: 12 characters sent
+LABEL message acknowledged ACK
+Enter a one-line message to send (max 99 chars), or DONE to quit
+14 characters sent
+acknowledged ACK
+Enter a one-line message to send (max 99 chars), or DONE to quit
+23 characters sent
+acknowledged ACK
+Enter a one-line message to send (max 99 chars), or DONE to quit
+9 characters sent
+acknowledged ACK
+Enter a one-line message to send (max 99 chars), or DONE to quit
+4 characters sent
+acknowledged ACK
+Enter a one-line message to send (max 99 chars), or DONE to quit
+4 characters sent
+acknowledged DONE
+Termination message received

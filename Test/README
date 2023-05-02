@@ -1,0 +1,64 @@
+Tests
+
+Basic idea:  
+  - launch client(s) and server that each take their standard inputs from 
+    invocations of testreceiver
+  - enter input into running client(s) and server by using testsend
+    to send that input to the corresponding testreceiver
+  - capture diffs with expected output from each client/server to determine 
+    whether anything changed
+This strategy requires a two-step shutdown strategy:  
+ 1. shutting down a client or server; then 
+ 2. shutting down that component's testreceiver (TESTRECEIVER_END)
+
+First, enter test machines info in testsend.config
+  - first column is a name for each machine
+  - second and third columns are hostname and port number for testsend program
+These values should be consistent with values at top of test scripts dotest and 
+dotest2.  Also, make sure you have passwordless ssh access to each test machine
+
+Testing scripts:
+  - dotest -- test a single client and server
+    expected output files: client.out1 and server.out1
+    sample runs (after configuration above):
+	./dotest
+	more *1.diff       # these files will be empty if test succeeds
+	
+  - dotest2 -- test two clients and one server
+    expected output files: client1.out2, client2.out2, server.out2
+    sample runs (after configuration above):
+	./dotest2
+	more *2.diff       # these files will be empty if test succeeds
+
+----------------------------
+Original description of tests
+
+
+single client
+ 1. start server on rns202-21
+    rns202-21%  server 2747 | diff - test.server.out
+
+ 2. start client on cs21346.cs
+    cs21346%    cat test.client.in - | client rns202-21.cs.stolaf.edu 2747 | 
+                diff - test.client.out1
+
+ 3. commands/messages:
+     a. enter DUMP command on server
+     b. enter DONE command (plus following extra newline) on client
+     c. enter DUMP command on server
+     d. enter EXIT command on server
+
+dual client
+ 1. start server on rns202-21
+    rns202-21% server 2747 | diff - test.server.out2
+ 2. start client on cs21346.cs
+    cs21346%   cat test.client.in - | client rns202-21.cs.stolaf.edu 2747
+ 3. enter DUMP command on server
+ 4. start client on rns202-2
+    rns202-2%  cat test.client.in - | client rns202-21.cs.stolaf.edu 2747
+ 5. enter DUMP command on server
+ 6. enter DONE command and newline on cs21346 client
+ 7. enter DUMP command on server
+ 8. enter DONE command and newline on rns202-2 client
+ 9. enter DUMP command on server
+10. enter EXIT command on server
