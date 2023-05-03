@@ -13,7 +13,7 @@
 
 using namespace std;
 
-#define MAXBUFF 100
+#define MAXBUFF 100000
 const char *label_env = "CLIENT_LABEL";
 const char *default_label = "Client";
 
@@ -89,7 +89,7 @@ int main(int argc, char **argv) {
       ; /* outgoing message same as input message */
     else { // content of a message provided
       ss.str("");
-      ss << "MSG " << buff;
+      ss << "SCRIPT " << buff;
       strcpy(buff, ss.str().c_str());
     }
     if ((ret = sock.send(buff, strlen(buff))) < 0)

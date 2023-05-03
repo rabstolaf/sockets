@@ -5,6 +5,7 @@
 #include <cstring>
 #include <sstream>
 #include <string>
+#include <fstream>
 #include "Worker.h"
 
 int Worker::MAXBUFF = 100;
@@ -82,6 +83,9 @@ void Worker::doWork(const ManagementData *mgt) {
     else if (strncmp(buff, "MSG ", 4) == 0) 
       doMSG(buff);
 
+    else if (strncmp(buff, "SCRIPT ", 4) == 0) 
+      doSCRIPT(buff);
+
     else 
       doUnknown(buff);     // unrecognized message type
 
@@ -113,6 +117,23 @@ void Worker::doLABEL(const char *buff) {
 /** Handle MSG message */
 void Worker::doMSG(const char *buff) {
       cout << buff+4 << endl;
+      sockp->send("ACK", 3);
+      cout << "[" << id << "] sent acknowledgment" << endl;
+}
+
+/** Handle SCRIPT message */
+void Worker::doSCRIPT(const char *buff) {
+      cout << buff+7 << endl << endl;
+      
+      // buff+7 is filename of script input
+      const int maxfile = 100000;
+      char *inbuff = new char [maxfile];
+      ifstream infile;
+      infile.open(buff+7, ios::in);
+      infile.read(inbuff, maxfile-1);
+      inbuff[infile.gcount()] = '\0';
+      cout << inbuff << endl;
+      
       sockp->send("ACK", 3);
       cout << "[" << id << "] sent acknowledgment" << endl;
 }
