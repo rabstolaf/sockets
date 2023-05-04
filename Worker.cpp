@@ -6,9 +6,10 @@
 #include <sstream>
 #include <string>
 #include <fstream>
+#include <cstdlib>
 #include "Worker.h"
 
-int Worker::MAXBUFF = 100;
+int Worker::MAXBUFF = 200;
 
 /** helper method
     @param str C-style string (null-terminated array of characters)
@@ -126,6 +127,7 @@ void Worker::doSCRIPT(const char *buff) {
       cout << buff+7 << endl << endl;
       
       // buff+7 is filename of script input
+      /*
       const int maxfile = 100000;
       char *inbuff = new char [maxfile];
       ifstream infile;
@@ -133,7 +135,16 @@ void Worker::doSCRIPT(const char *buff) {
       infile.read(inbuff, maxfile-1);
       inbuff[infile.gcount()] = '\0';
       cout << inbuff << endl;
-      
+      */
+
+      //      char *cmd = new char [MAXBUFF];
+      stringstream ss;
+      ss << "./standalone " << buff+7 << " > " << buff+7 << ".out 2> "
+	  << buff+7 << ".err"; 
+      int status = system(ss.str().c_str());
+
+      cout << ss.str().c_str() << endl << "exit status " << status << endl;
+
       sockp->send("ACK", 3);
       cout << "[" << id << "] sent acknowledgment" << endl;
 }

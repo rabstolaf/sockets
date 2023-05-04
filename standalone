@@ -30,14 +30,14 @@ read JOBNAME COUNT FILENAME BUILD
 test -z "$JOBNAME" && { echo "$USAGE" ; exit 1 ; }
 read EXEC
 
-#test -d $JOBNAME || mkdir -p $JOBNAME || {
-#    echo "$PROG: could not create subdirectory $JOBNAME, aborting"
-#    exit 1
-#}
-#cd $JOBNAME || { 
-#    echo "$PROG: could not change to subdirectory $JOBNAME, aborting"
-#    exit 1
-#}
+test -d $JOBNAME || mkdir -p $JOBNAME || {
+    echo "$PROG: could not create subdirectory $JOBNAME, aborting"
+    exit 1
+}
+cd $JOBNAME || { 
+    echo "$PROG: could not change to subdirectory $JOBNAME, aborting"
+    exit 1
+}
 
 case "$COUNT" in 
     ""|0) ;;

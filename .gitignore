@@ -5,4 +5,5 @@ server
 old
 *.bu
 *.o
-input/
+input/*.out
+input/*.err
