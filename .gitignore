@@ -7,3 +7,5 @@ old
 *.o
 input/*.out
 input/*.err
+example1/
+mpi_spmd/
