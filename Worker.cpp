@@ -84,7 +84,7 @@ void Worker::doWork(const ManagementData *mgt) {
     else if (strncmp(buff, "MSG ", 4) == 0) 
       doMSG(buff);
 
-    else if (strncmp(buff, "SCRIPT ", 4) == 0) 
+    else if (strncmp(buff, "SCRIPT ", 7) == 0) 
       doSCRIPT(buff);
 
     else 
@@ -138,15 +138,72 @@ void Worker::doSCRIPT(const char *buff) {
       */
 
       //      char *cmd = new char [MAXBUFF];
+      string basename(buff+7);
       stringstream ss;
-      ss << "./standalone " << buff+7 << " > " << buff+7 << ".out 2> "
-	  << buff+7 << ".err"; 
+      ss << "./standalone " << basename
+	 << " > " << basename + ".out 2> " << basename + ".err";
+      cout << ss.str().c_str() << endl;
+      
       int status = system(ss.str().c_str());
+      cout << "exit status " << status << endl;
 
-      cout << ss.str().c_str() << endl << "exit status " << status << endl;
+      // build and send response message 
+      char *inbuff = new char [MAXBUFF];
+      ifstream infile;
+      if (status == 0) {
+	ss.str("SUCCESS ");  
+	infile.open(basename + ".out", ios::in);  // ERROR CHECK
+	if (infile && infile.peek() != istream::traits_type::eof()) {
+	  ss << endl << "===== STANDARD OUTPUT =====" << endl;
+	  infile.read(inbuff, MAXBUFF-1);  // ERROR CHECK
+	  inbuff[infile.gcount()] = '\0';
+	  ss << inbuff;
+	  infile.close();
+	} else {
+	  ss << endl << "===== NO STANDARD OUTPUT =====" << endl;
+	}	  
+	infile.open(basename + ".err", ios::in);  // ERROR CHECK
+	if (infile && infile.peek() != istream::traits_type::eof()) {
+	  // non-empty .err file
+	  ss << endl << "===== STANDARD ERROR =====" << endl;
+	  infile.read(inbuff, MAXBUFF-1);  // ERROR CHECK
+	  inbuff[infile.gcount()] = '\0';
+	  ss << inbuff;
+	  infile.close();
+	} else {
+	  ss << endl << "===== NO STANDARD ERROR =====" << endl;
+	}
+	
+      } else {
+	ss.str("ERROR ");  
+	infile.open(basename + ".out", ios::in);  // ERROR CHECK
+	if (infile && infile.peek() != istream::traits_type::eof()) {
+	  ss << endl << "===== STANDARD OUTPUT =====" << endl;
+	  infile.read(inbuff, MAXBUFF-1);  // ERROR CHECK
+	  inbuff[infile.gcount()] = '\0';
+	  ss << inbuff;
+	  infile.close();
+	} else {
+	  ss << endl << "===== NO STANDARD OUTPUT =====" << endl;
+	}	  
+	infile.open(basename + ".err", ios::in);  // ERROR CHECK
+	if (infile && infile.peek() != istream::traits_type::eof()) {
+	  // non-empty .err file
+	  ss << endl << "===== STANDARD ERROR =====" << endl;
+	  infile.read(inbuff, MAXBUFF-1);  // ERROR CHECK
+	  inbuff[infile.gcount()] = '\0';
+	  ss << inbuff;
+	  infile.close();
+	} else {
+	  ss << endl << "===== NO STANDARD ERROR =====" << endl;
+	}
+      }
 
-      sockp->send("ACK", 3);
-      cout << "[" << id << "] sent acknowledgment" << endl;
+      // cout << ss.str() << endl;
+
+      sockp->send(ss.str().c_str(), strlen(ss.str().c_str()));
+      cout << "[" << id << "] sent " << strlen(ss.str().c_str())
+	   << " byte response"<< endl;
 }
 
 /** Handle unknown message */

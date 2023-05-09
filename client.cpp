@@ -100,7 +100,7 @@ int main(int argc, char **argv) {
       return 1;
     else {
       buff[ret] = '\0';
-      cout << "acknowledged " << buff << endl;
+      cout << ret << " characters received" << endl << buff << endl;
     }
   }
 
