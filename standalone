@@ -49,7 +49,7 @@ case "$COUNT" in
 		echo "$PROG $JOBNAME: missing filename"
 		echo "$USAGE" 
 		exit 1; }
-	    dd bs=1 count=$COUNT of="$FILENAME" || {
+	    dd bs=1 count=$COUNT of="$FILENAME" status=none || {
 		echo "$PROG $JOBNAME: couldn't read $COUNT bytes of $FILENAME"
 		echo "$USAGE" 
 		exit 1; } ;;
