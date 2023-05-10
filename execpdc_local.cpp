@@ -103,38 +103,50 @@ int main(int argc, char **argv) {
     log << "LABEL message acknowledged " << buff << endl;
   }
 
-  while (strcmp(buff, "DONE") != 0) {
-    /* cout << "Enter a one-line message to send (max " << MAXBUFF-1 << 
-       " chars), or DONE to quit" << endl; */
-    if (!cin.getline(buff, MAXBUFF)) {
-      msg = "Error or end of input -- aborting";
-      cerr << msg << endl;
-      log << msg << endl;
-      return 1;
-    }
-    if (strcmp(buff, "DONE") == 0)
-      ; /* outgoing message same as input message */
-    else { // content of a message provided
-      ss.str("");
-      ss << "SCRIPT " << buff;
-      strcpy(buff, ss.str().c_str());
-    }
-    if ((ret = sock.send(buff, strlen(buff))) < 0)
-      return 1;
-    log << ret << " characters sent" << endl;
-
-    if ((ret = sock.recv(buff, MAXBUFF-1)) < 0)
-      return 1;
-    else {
-      buff[ret] = '\0';
-      ss.str("");
-      ss << ret << " characters received" << endl << buff << endl;
-      log << ss.str();
-      cout << ss.str();
-    }
+  //while (strcmp(buff, "DONE") != 0) {
+  /* cout << "Enter a one-line message to send (max " << MAXBUFF-1 << 
+     " chars), or DONE to quit" << endl; */
+  if (!cin.getline(buff, MAXBUFF)) {
+    msg = "Error or end of input -- aborting";
+    cerr << msg << endl;
+    log << msg << endl;
+    return 1;
   }
+  if (strcmp(buff, "DONE") == 0)
+    ; /* outgoing message same as input message */
+  else { // content of a message provided
+    ss.str("");
+    ss << "SCRIPT " << buff;
+    strcpy(buff, ss.str().c_str());
+  }
+  if ((ret = sock.send(buff, strlen(buff))) < 0)
+    return 1;
+  log << ret << " characters sent" << endl;
+  
+  if ((ret = sock.recv(buff, MAXBUFF-1)) < 0)
+    return 1;
+  else {
+    buff[ret] = '\0';
+    ss.str("");
+    ss << ret << " characters received" << endl << buff << endl;
+    log << ss.str();
+    cout << ss.str();
+  }
+  //}
 
-  log << "Termination message received" << endl;
+  if ((ret = sock.send("DONE", 4)) < 0)
+    return 1;
+  log << "DONE message sent" << endl;
+
+  if ((ret = sock.recv(buff, MAXBUFF-1)) < 0) {
+    msg = "Could not receive response from DONE message - send() failed";
+    cerr <<  msg << endl;
+    log << msg << endl;
+    return 1;
+  } 
+  buff[ret] = '\0';
+  log << "DONE message acknowledged: " << buff << endl;
+
   sock.send("END", 3);
   return 0;
 
