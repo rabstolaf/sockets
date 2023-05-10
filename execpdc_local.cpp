@@ -8,8 +8,11 @@
 #include <iostream>
 #include <cstring>
 #include <cstdlib>
+#include <fstream>
 #include <sstream>
 #include "Socket.h"
+#include <chrono>
+#include <ctime>
 
 using namespace std;
 
@@ -23,9 +26,24 @@ int main(int argc, char **argv) {
   int port;
   const char *label = 0;
   int ret;  /* return value from a call */
+  stringstream ss;  /* utility stringstream */
+  const char *msg;  /* utility string pointer */
+
+  // initial log entry
+  ofstream log;
+  log.open("execpdc_local.log", ios_base::app);
+  if (!log) {
+    cerr << "unable to open log file, aborting" << endl;
+    return 1;
+  }
+  time_t now = chrono::system_clock::to_time_t(chrono::system_clock::now());
+  log << endl << "===== " << ctime(&now) << endl;
 
   if (argc < 3) {
-    cout << "Usage:  " << prog << " host port" << endl;
+    ss.str("");
+    ss << "Usage:  " << prog << " host port" << endl; 
+    cerr << ss.str();
+    log << ss.str();
     return 1;
   }
   host = argv[1];
@@ -37,26 +55,30 @@ int main(int argc, char **argv) {
     label = getenv(label_env);
   if (label == 0)
     label = default_label;
-  cout << "Label: " << label << endl;
+  log << "Label: " << label << endl;
 
   Socket sock(host, port);
   if (sock.isConnected()) 
-    cout << "Connected." << endl;
+    log << "Connected." << endl;
   else {
-    cout << "Could not connect, aborting" << endl;
+    msg = "Could not connect, aborting";
+    cerr << msg << endl;
+    log << msg << endl;
     return 1;
   }
   
   char buff[MAXBUFF];  /* message buffer */
-  stringstream ss;  /* stringstream for constructing messages */
 
   if ((ret = sock.recv(buff, MAXBUFF-1)) < 0) {
-    cout << "Could not receive welcome message from server, aborting" << endl;
+    
+    cerr << "Could not receive welcome message from server, aborting" << endl;
     return 1;
   } 
   buff[ret] = '\0';
   if (strcmp(buff, "NACK") == 0) {
-    cout << "Server rejected new connection, aborting" << endl;
+    msg = "Server rejected new connection, aborting";
+    cerr << msg << endl;
+    log << msg << endl;
     return 1;
   }
   // assert:  welcome message received and connection to server completed
@@ -65,24 +87,29 @@ int main(int argc, char **argv) {
   ss << "LABEL " << label;
   strcpy(buff, ss.str().c_str());
   if ((ret = sock.send(buff, strlen(buff))) < 0) {
-    cout << "Could not send LABEL message - send() failed" << endl;
+    msg = "Could not send LABEL message - send() failed";
+    cerr << msg << endl;
+    log << msg << endl;
     return 1;
   }
-  cout << "LABEL message: " << ret << " characters sent" << endl;
+  log << "LABEL message: " << ret << " characters sent" << endl;
   if ((ret = sock.recv(buff, MAXBUFF-1)) < 0) {
-    cout << "Could not receive response from LABEL message - send() failed" 
-	 << endl;
+    msg = "Could not receive response from LABEL message - send() failed";
+    cerr <<  msg << endl;
+    log << msg << endl;
     return 1;
   } else {
     buff[ret] = '\0';
-    cout << "LABEL message acknowledged " << buff << endl;
+    log << "LABEL message acknowledged " << buff << endl;
   }
 
   while (strcmp(buff, "DONE") != 0) {
-    cout << "Enter a one-line message to send (max " << MAXBUFF-1 << 
-      " chars), or DONE to quit" << endl;
+    /* cout << "Enter a one-line message to send (max " << MAXBUFF-1 << 
+       " chars), or DONE to quit" << endl; */
     if (!cin.getline(buff, MAXBUFF)) {
-      cout << "Error or end of input -- aborting" << endl;
+      msg = "Error or end of input -- aborting";
+      cerr << msg << endl;
+      log << msg << endl;
       return 1;
     }
     if (strcmp(buff, "DONE") == 0)
@@ -94,17 +121,20 @@ int main(int argc, char **argv) {
     }
     if ((ret = sock.send(buff, strlen(buff))) < 0)
       return 1;
-    cout << ret << " characters sent" << endl;
+    log << ret << " characters sent" << endl;
 
     if ((ret = sock.recv(buff, MAXBUFF-1)) < 0)
       return 1;
     else {
       buff[ret] = '\0';
-      cout << "acknowledged " << buff << endl;
+      ss.str("");
+      ss << ret << " characters received" << endl << buff << endl;
+      log << ss.str();
+      cout << ss.str();
     }
   }
 
-  cout << "Termination message received" << endl;
+  log << "Termination message received" << endl;
   sock.send("END", 3);
   return 0;
 

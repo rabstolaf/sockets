@@ -4,6 +4,7 @@ receiver
 client
 execpdc
 execpdc_local
+execpdc_local.log
 server
 old
 *.bu
