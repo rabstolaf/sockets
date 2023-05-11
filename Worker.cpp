@@ -68,7 +68,7 @@ void Worker::doWork(const ManagementData *mgt) {
     strcpy(buff, "DONE");
   sockp->send(buff, strlen(buff));  
 
-  while (strcmp(buff, "DONE") != 0) {
+  while (strcmp(buff, "DONE") != 0 && strcmp(buff, "END") != 0) {
     ret = sockp->recv(buff, MAXBUFF-1);
 
     buff[ret] = '\0';  // add terminating nullbyte to received array of char
@@ -77,6 +77,9 @@ void Worker::doWork(const ManagementData *mgt) {
 
     if (strcmp(buff, "DONE") == 0 || !mgt->contin) 
       doDONE();
+
+    else if (strcmp(buff, "END") == 0)
+      break;
 
     else if (strncmp(buff, "LABEL ", 6) == 0) 
       doLABEL(buff);
@@ -91,11 +94,13 @@ void Worker::doWork(const ManagementData *mgt) {
       doUnknown(buff);     // unrecognized message type
 
   }
-  // receive END message from client
-  if ((ret = sockp->recv(buff, MAXBUFF-1)) != -1) {
-    buff[ret] = '\0';
-    cout << "[" << id << "] Received " << buff << " from client " 
-	 << label << endl;
+  if (strcmp(buff, "END") != 0) {
+    // receive END message from client
+    if ((ret = sockp->recv(buff, MAXBUFF-1)) != -1) {
+      buff[ret] = '\0';
+      cout << "[" << id << "] Received " << buff << " from client " 
+	   << label << endl;
+    }
   }
   state = DONE;
 }
@@ -154,13 +159,13 @@ void Worker::doSCRIPT(const char *buff) {
 	ss.str("SUCCESS ");  
 	infile.open(basename + ".out", ios::in);  // ERROR CHECK
 	if (infile && infile.peek() != istream::traits_type::eof()) {
-	  ss << endl << "===== STANDARD OUTPUT =====" << endl;
+	  //ss << endl << "===== STANDARD OUTPUT ===== << endl";
 	  infile.read(inbuff, MAXBUFF-1);  // ERROR CHECK
 	  inbuff[infile.gcount()] = '\0';
 	  ss << inbuff;
 	  infile.close();
 	} else {
-	  ss << endl << "===== NO STANDARD OUTPUT =====" << endl;
+	  //ss << endl << "===== NO STANDARD OUTPUT =====" << endl;
 	}	  
 	infile.open(basename + ".err", ios::in);  // ERROR CHECK
 	if (infile && infile.peek() != istream::traits_type::eof()) {
@@ -171,7 +176,7 @@ void Worker::doSCRIPT(const char *buff) {
 	  ss << inbuff;
 	  infile.close();
 	} else {
-	  ss << endl << "===== NO STANDARD ERROR =====" << endl;
+	  //ss << endl << "===== NO STANDARD ERROR =====" << endl;
 	}
 	
       } else {
