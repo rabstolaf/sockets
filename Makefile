@@ -2,7 +2,7 @@
 
 CFLAGS = -Wall -std=c++11
 
-all: sender receiver client server execpdc_local # sender2 receiver2 
+all: sender receiver client server execpdc # sender2 receiver2 
 
 Socket.o:  Socket.cpp Socket.h
 	g++ $(CFLAGS) -c Socket.cpp
@@ -45,12 +45,12 @@ client: $(CLIENT_OBJS)
 client.o:  client.cpp Socket.h
 	g++ $(CFLAGS) -c client.cpp
 
-EXECPDC_LOCAL_OBJS = execpdc_local.o Socket.o
-execpdc_local: $(EXECPDC_LOCAL_OBJS)
-	g++ $(CFLAGS) -o execpdc_local $(EXECPDC_LOCAL_OBJS)
+EXECPDC_OBJS = execpdc.o Socket.o
+execpdc: $(EXECPDC_OBJS)
+	g++ $(CFLAGS) -o execpdc $(EXECPDC_OBJS)
 
-execpdc_local.o:  execpdc_local.cpp Socket.h
-	g++ $(CFLAGS) -c execpdc_local.cpp
+execpdc.o:  execpdc.cpp Socket.h execpdc.config
+	g++ $(CFLAGS) -c execpdc.cpp
 
 SERVER_OBJS = server.o Socket.o Worker.o ManagementData.o
 server: $(SERVER_OBJS)
@@ -66,7 +66,7 @@ ManagementData.o: ManagementData.cpp ManagementData.h
 	g++ $(CFLAGS) -c ManagementData.cpp
 
 tarball:
-	cd .. ; tar cfz sockets.tar.gz sockets/{{sender,receiver,client,execpdc_local,server}.cpp,{Socket,Worker}.{cpp,h},Makefile.sockets}
+	cd .. ; tar cfz sockets.tar.gz sockets/{{sender,receiver,client,execpdc,server}.cpp,{Socket,Worker}.{cpp,h},Makefile.sockets}
 
 clean:
-	rm -rf sender receiver client execpdc_local server *.o
+	rm -rf sender receiver client execpdc server *.o

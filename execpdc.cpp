@@ -75,7 +75,7 @@ int main(int argc, char **argv) {
     return 1;
   } 
   buff[ret] = '\0';
-  if (strcmp(buff, "NACK") == 0) {
+  if (strcmp(buff, "DONE") == 0) {
     msg = "Server rejected new connection, aborting";
     cerr << msg << endl;
     log << msg << endl;
@@ -103,7 +103,6 @@ int main(int argc, char **argv) {
     log << "LABEL message acknowledged " << buff << endl;
   }
 
-  //while (strcmp(buff, "DONE") != 0) {
   /* cout << "Enter a one-line message to send (max " << MAXBUFF-1 << 
      " chars), or DONE to quit" << endl; */
   if (!cin.getline(buff, MAXBUFF)) {
@@ -130,11 +129,10 @@ int main(int argc, char **argv) {
     ss.str("");
     ss << ret << " characters received" << endl << buff << endl;
     log << ss.str();
-    cout << ss.str();
+    cout << buff;
   }
-  //}
 
-  if ((ret = sock.send("DONE", 4)) < 0)
+  /*  if ((ret = sock.send("DONE", 4)) < 0)
     return 1;
   log << "DONE message sent" << endl;
 
@@ -146,7 +144,9 @@ int main(int argc, char **argv) {
   } 
   buff[ret] = '\0';
   log << "DONE message acknowledged: " << buff << endl;
+  */
 
+  log << "sending END message" << endl;
   sock.send("END", 3);
   return 0;
 
