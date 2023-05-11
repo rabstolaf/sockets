@@ -55,7 +55,7 @@ int main(int argc, char **argv) {
     return 1;
   } 
   buff[ret] = '\0';
-  if (strcmp(buff, "NACK") == 0) {
+  if (strcmp(buff, "DONE") == 0) {
     cout << "Server rejected new connection, aborting" << endl;
     return 1;
   }

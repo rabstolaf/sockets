@@ -3,7 +3,8 @@ sender
 receiver
 client
 execpdc
-execpdc_local
+execpdc.log
+execpdc.config
 server
 old
 *.bu
