@@ -1,6 +1,6 @@
 /* Client-side use of Berkeley socket calls -- send one message to server
    Command-line args:
-     1.  (optional) label for this client
+     1.  
    RAB 5/16 rev 12/17 */
 
 #include <iostream>

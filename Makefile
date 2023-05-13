@@ -48,7 +48,7 @@ client: $(CLIENT_OBJS)
 client.o:  client.cpp Socket.h
 	g++ $(CFLAGS) -c client.cpp
 
-EXECPDC_OBJS = execpdc.o Socket.o
+EXECPDC_OBJS = execpdc.o Socket.o Config.o
 execpdc: $(EXECPDC_OBJS)
 	g++ $(CFLAGS) -o execpdc $(EXECPDC_OBJS)
 
