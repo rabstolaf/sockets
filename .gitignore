@@ -1,8 +1,10 @@
 Archive
+*~
 sender
 receiver
 client
 execpdc
+Config_test
 execpdc.log
 execpdc.config
 server

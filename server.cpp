@@ -1,7 +1,8 @@
 /** @file
     @brief Main program for multithreaded file server
-    @par Usage Requires one command line arg:  
-     1.  port number to use (on this machine). 
+    @par Requires configuration file execpdc.config for Config object
+    @par Usage One optional command line arg:  
+     1.  port number to use (on this machine).  Overrides value in Config object
 
     @par This program performs actions according to two kinds of input:
      - <em>services</em> are actions requested over a network connection
@@ -82,20 +83,22 @@
 #include <sstream>
 #include <cstring>
 #include <thread>
+#include "Config.h"
 #include "Worker.h"
 using namespace std;
 
 void doCommands(ManagementData *mgtp, int port);
 
 int main(int argc, char **argv) {
-  char *prog = argv[0];
+  //char *prog = argv[0];
   int port;
 
-  if (argc < 2) {
-    cout << "Usage:  " << prog << " port" << endl;
-    return 1;
-  }
-  port = atoi(argv[1]);
+  const char *config_filename = "execpdc.config"; // GENERALIZE
+  Config config(config_filename);
+  port = atoi(config["PORT"].c_str());
+  if (argc > 1) {
+    port = atoi(argv[1]);
+    } 
 
   ServerSocket ssock(port);
   if (ssock.isBound())

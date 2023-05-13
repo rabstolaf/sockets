@@ -38,7 +38,10 @@ receiver2.o:  receiver2.cpp Socket.h
 	g++ $(CFLAGS) -c receiver2.cpp
 
 
-CLIENT_OBJS = client.o Socket.o
+Config.o:  Config.cpp Config.h
+	g++ $(CFLAGS) -c Config.cpp
+
+CLIENT_OBJS = client.o Socket.o Config.o
 client: $(CLIENT_OBJS)
 	g++ $(CFLAGS) -o client $(CLIENT_OBJS)
 
@@ -52,7 +55,7 @@ execpdc: $(EXECPDC_OBJS)
 execpdc.o:  execpdc.cpp Socket.h execpdc.config
 	g++ $(CFLAGS) -c execpdc.cpp
 
-SERVER_OBJS = server.o Socket.o Worker.o ManagementData.o
+SERVER_OBJS = server.o Socket.o Worker.o ManagementData.o Config.o
 server: $(SERVER_OBJS)
 	g++ $(CFLAGS) -pthread -o server $(SERVER_OBJS)
 

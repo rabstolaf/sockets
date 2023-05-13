@@ -1,8 +1,6 @@
 /* Client-side use of Berkeley socket calls -- send one message to server
    Command-line args:
-     1.  name of host to connect to (use  localhost  to connect to same host)
-     2.  port number to use. 
-     3.  (optional) label for this client
+     1.  (optional) label for this client
    RAB 5/16 rev 12/17 */
 
 #include <iostream>
@@ -10,6 +8,7 @@
 #include <cstdlib>
 #include <sstream>
 #include "Socket.h"
+#include "Config.h"
 
 using namespace std;
 
@@ -18,20 +17,17 @@ const char *label_env = "CLIENT_LABEL";
 const char *default_label = "Client";
 
 int main(int argc, char **argv) {
-  char *prog = argv[0];
-  char *host;
+  //  char *prog = argv[0];
+  const char *host;
   int port;
   const char *label = 0;
   int ret;  /* return value from a call */
 
-  if (argc < 3) {
-    cout << "Usage:  " << prog << " host port" << endl;
-    return 1;
-  }
-  host = argv[1];
-  port = atoi(argv[2]);
-  if (argc > 3) 
-    label = argv[3];
+  const char *config_filename = "execpdc.config"; // GENERALIZE
+  Config config(config_filename);
+  host = config["SERVER"].c_str();
+  port = atoi(config["PORT"].c_str());
+  cout << host << " " << port << endl;
 
   if (label == 0) 
     label = getenv(label_env);

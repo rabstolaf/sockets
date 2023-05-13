@@ -31,7 +31,7 @@ int main(int argc, char **argv) {
 
   // initial log entry
   ofstream log;
-  log.open("execpdc_local.log", ios_base::app);
+  log.open("execpdc.log", ios_base::app);
   if (!log) {
     cerr << "unable to open log file, aborting" << endl;
     return 1;
