@@ -1,7 +1,10 @@
-/* Client-side use of Berkeley socket calls -- send one message to server
+/* Client for execpdc computation in Runestone Backend project
+   For execution within Jobe container
    Command-line args:
-     1.  
-   RAB 5/16 rev 12/17 */
+     1. workdir, unique working directory for an execpdc computation
+     2. inputfile, specifies the computation to perform
+     3. (optional) label, identifier within execpdc server, default workdir
+   RAB adapted from sockets/client.cpp 5/23 */
 
 #include <iostream>
 #include <cstring>
@@ -16,23 +19,16 @@
 using namespace std;
 
 #define MAXBUFF 100000
-const char *label_env = "CLIENT_LABEL";
-const char *default_label = "Client";
+const char *label_env = "EXECPDC_LABEL";
 
 int main(int argc, char **argv) {
-  //  char *prog = argv[0];
+  char *prog = argv[0];
   const char *host;
   int port;
   const char *label = 0;
   int ret;  /* return value from a call */
   stringstream ss;  /* utility stringstream */
   const char *msg;  /* utility string pointer */
-
-  const char *config_filename = "execpdc.config"; // GENERALIZE
-  Config config(config_filename);
-  host = config["SERVER"].c_str();
-  port = atoi(config["PORT"].c_str());
-  cout << host << " " << port << endl;
 
   // initial log entry
   ofstream log;
@@ -44,24 +40,33 @@ int main(int argc, char **argv) {
   time_t now = chrono::system_clock::to_time_t(chrono::system_clock::now());
   log << endl << "===== " << ctime(&now) << endl;
 
-  /*  if (argc < 3) {
+  const char *config_filename = "execpdc.config"; // GENERALIZE
+  Config config(config_filename);
+  host = config["SERVER"].c_str();
+  port = atoi(config["PORT"].c_str());
+  // cout << host << " " << port << endl;
+
+  const char *workdir = 0;
+  const char *inputfile = 0;
+  if (argc < 3) {
     ss.str("");
-    ss << "Usage:  " << prog << " host port" << endl; 
+    ss << "Usage:  " << prog << " workdir inputfile [label]" << endl; 
     cerr << ss.str();
     log << ss.str();
     return 1;
   }
-  host = argv[1];
-  port = atoi(argv[2]);
-  */
+  workdir = argv[1];
+  inputfile = argv[2];
+  //cout << workdir << " " << inputfile << endl;
+
   if (argc > 3) 
     label = argv[3];
-
   if (label == 0) 
     label = getenv(label_env);
   if (label == 0)
-    label = default_label;
-  log << "Label: " << label << endl;
+    label = workdir;
+  log << "orkdir=" << workdir << "  inputfile=" << inputfile
+      << "label=" << label << endl;
 
   Socket sock(host, port);
   if (sock.isConnected()) 
@@ -111,6 +116,7 @@ int main(int argc, char **argv) {
 
   /* cout << "Enter a one-line message to send (max " << MAXBUFF-1 << 
      " chars), or DONE to quit" << endl; */
+  /*
   if (!cin.getline(buff, MAXBUFF)) {
     msg = "Error or end of input -- aborting";
     cerr << msg << endl;
@@ -118,12 +124,17 @@ int main(int argc, char **argv) {
     return 1;
   }
   if (strcmp(buff, "DONE") == 0)
-    ; /* outgoing message same as input message */
-  else { // content of a message provided
+    ; // outgoing message same as input message 
+  else { // content of a message provided 
     ss.str("");
     ss << "SCRIPT " << buff;
     strcpy(buff, ss.str().c_str());
   }
+  */
+  
+  ss.str("");
+  ss << "SCRIPT " << workdir << "/" << inputfile;
+  strcpy(buff, ss.str().c_str());
   if ((ret = sock.send(buff, strlen(buff))) < 0)
     return 1;
   log << ret << " characters sent" << endl;

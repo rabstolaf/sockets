@@ -27,7 +27,7 @@ int main(int argc, char **argv) {
   Config config(config_filename);
   host = config["SERVER"].c_str();
   port = atoi(config["PORT"].c_str());
-  cout << host << " " << port << endl;
+  // cout << host << " " << port << endl;
 
   if (label == 0) 
     label = getenv(label_env);
