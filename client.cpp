@@ -1,6 +1,9 @@
 /* Client-side use of Berkeley socket calls -- send one message to server
-   Command-line args:
-     1.  
+   No command-line 
+   Requires configuration file execpdc.config for Config object
+   Environment variables
+     EXECPDC_SERVER - overrides Config value for SERVER
+     EXECPDC_PORT - overrides Config value for PORT to contact server
    RAB 5/16 rev 12/17 */
 
 #include <iostream>
@@ -25,9 +28,9 @@ int main(int argc, char **argv) {
 
   const char *config_filename = "execpdc.config"; // GENERALIZE
   Config config(config_filename);
-  host = config["SERVER"].c_str();
-  port = atoi(config["PORT"].c_str());
-  // cout << host << " " << port << endl;
+  host = config.valueOrEnv("SERVER", "EXECPDC_SERVER").c_str();
+  port = atoi(config.valueOrEnv("PORT", "EXECPDC_PORT").c_str());
+  cout << host << " " << port << endl;
 
   if (label == 0) 
     label = getenv(label_env);

@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <cstdlib>
 #include "Config.h"
 
 Config::Config(const char *filename) : map() {
@@ -34,4 +35,12 @@ int MAIN() {
     cout << it->first << " " << it->second << endl;
 
   return 0;
+}
+
+string Config::valueOrEnv(const string& key, const char *envName) {
+  char *envStr = getenv(envName);
+  if (envStr)
+    return envStr;
+  else
+    return at(key);
 }

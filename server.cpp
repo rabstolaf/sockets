@@ -1,8 +1,11 @@
 /** @file
     @brief Main program for multithreaded file server
     @par Requires configuration file execpdc.config for Config object
-    @par Usage One optional command line arg:  
-     1.  port number to use (on this machine).  Overrides value in Config object
+    @par No command line args  
+    @par Environment variables - override Config values if present
+     - \c EXECPDC_PORT - overrides Config value for PORT for this server
+     - \c EXECPDC_CUDA_ARCH - overrides Config value for CUDA_ARCH
+     - \c EXECPDC_SCRIPT - overrides Config value for SCRIPT
 
     @par This program performs actions according to two kinds of input:
      - <em>services</em> are actions requested over a network connection
@@ -95,10 +98,7 @@ int main(int argc, char **argv) {
 
   const char *config_filename = "execpdc.config"; // GENERALIZE
   Config config(config_filename);
-  port = atoi(config["PORT"].c_str());
-  if (argc > 1) {
-    port = atoi(argv[1]);
-    } 
+  port = atoi(config.valueOrEnv("PORT", "EXECPDC_PORT").c_str());
 
   ServerSocket ssock(port);
   if (ssock.isBound())

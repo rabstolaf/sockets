@@ -4,6 +4,10 @@
      1. workdir, unique working directory for an execpdc computation
      2. inputfile, specifies the computation to perform
      3. (optional) label, identifier within execpdc server, default workdir
+   Requires configuration file execpdc.config for Config object
+   Environment variables
+     EXECPDC_SERVER - overrides Config value for SERVER
+     EXECPDC_PORT - overrides Config value for PORT to contact server
    RAB adapted from sockets/client.cpp 5/23 */
 
 #include <iostream>
@@ -42,8 +46,8 @@ int main(int argc, char **argv) {
 
   const char *config_filename = "execpdc.config"; // GENERALIZE
   Config config(config_filename);
-  host = config["SERVER"].c_str();
-  port = atoi(config["PORT"].c_str());
+  host = config.valueOrEnv("SERVER", "EXECPDC_SERVER").c_str();
+  port = atoi(config.valueOrEnv("PORT", "EXECPDC_PORT").c_str());
   // cout << host << " " << port << endl;
 
   const char *workdir = 0;

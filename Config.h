@@ -12,4 +12,6 @@ private:
   
 public:
   Config(const char *);
+  string valueOrEnv(const string& key, const char *envName);
 };
+    
