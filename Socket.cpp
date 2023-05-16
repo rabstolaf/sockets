@@ -215,7 +215,7 @@ Socket *ServerSocket::accept() {
   socklen_t size = sizeof(struct sockaddr);
   int clientd;
 
-  cerr << "Waiting for a incoming connection..." << endl;
+  cerr << "Waiting for an incoming connection..." << endl;
   if ((clientd = ::accept(descrip, (struct sockaddr*) &ca, &size)) < 0) {
     cerr << "ServerSocket::accept() " << strerror(errno) << endl;
     return 0;
