@@ -1,5 +1,5 @@
-sta
-mpi_spmd 989 spmd.c mpicc -Wall spmd.c -o spmd
+mpi
+mpi_spmd 2 4 989 spmd.c mpicc -Wall spmd.c -o spmd
 mpirun -map-by node -np 4 ./spmd
 /* spmd.c
  * ... illustrates the single program multiple data

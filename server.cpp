@@ -95,10 +95,14 @@ void doCommands(ManagementData *mgtp, int port);
 int main(int argc, char **argv) {
   //char *prog = argv[0];
   int port;
+  const char *script = 0;
+  const char *cuda_arch = 0;
 
   const char *config_filename = "execpdc.config"; // GENERALIZE
   Config config(config_filename);
   port = atoi(config.valueOrEnv("PORT", "EXECPDC_PORT").c_str());
+  script = config.valueOrEnv("SCRIPT", "EXECPDC_SCRIPT").c_str();
+  cuda_arch = config.valueOrEnv("CUDA_ARCH", "EXECPDC_CUDA_ARCH").c_str();
 
   ServerSocket ssock(port);
   if (ssock.isBound())

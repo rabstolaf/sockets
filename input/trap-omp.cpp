@@ -1,5 +1,5 @@
-sta
-example1 1198 trap-omp.cpp g++ -o trap-omp trap-omp.cpp -lm -fopenmp
+omp
+example1 4 1198 trap-omp.cpp g++ -o trap-omp trap-omp.cpp -lm -fopenmp
 ./trap-omp 8
 
 #include <iostream>

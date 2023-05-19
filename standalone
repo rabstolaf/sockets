@@ -1,4 +1,4 @@
-#!/bin/bash
+ #!/bin/bash
 # prototype backend interpreter for the PDC CPET receptacle
 # RAB 10/2020 (version 1) Demo on 10/20/20
 PROG=`basename $0`
@@ -20,13 +20,16 @@ where the characters beginning with sta represent standard input.
 cat $1 | {
 
 read BACKEND ; test "$BACKEND" = "" && read BACKEND
-test "$BACKEND" = sta || {
-    echo "$PROG: first line is '$BACKEND'"
-    echo "   'sta' expected.  Aborting"
-    exit 1
-}
 
-read JOBNAME COUNT FILENAME BUILD
+case "$BACKEND" in
+    sta|gpu) read JOBNAME COUNT FILENAME BUILD;; 
+    omp) read JOBNAME CORECT COUNT FILENAME BUILD;; 
+    mpi|mpi4py) read JOBNAME HOSTCT CORECT COUNT FILENAME BUILD;;
+    *) echo "$PROG: first line is '$BACKEND'"
+       echo "Unrecognized backend value, aborting"
+       exit 1;;
+esac
+
 test -z "$JOBNAME" && { echo "$USAGE" ; exit 1 ; }
 read EXEC
 

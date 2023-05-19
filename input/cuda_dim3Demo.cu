@@ -1,4 +1,4 @@
-sta
+gpu
 cuda_dim3Demo 1825 dim3Demo.cu nvcc -arch=compute_61 -o dim3Demo dim3Demo.cu
 ./dim3Demo
 #include <stdio.h>

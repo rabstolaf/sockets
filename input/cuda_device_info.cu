@@ -1,4 +1,4 @@
-sta
+gpu
 cuda_device_info 4027 device_info.cu nvcc -arch=compute_61 -o device_info device_info.cu
 ./device_info
 /*
