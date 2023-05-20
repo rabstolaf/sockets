@@ -24,6 +24,10 @@ class ManagementData {
       threads try to access contin at the same time */
   atomic<int> contin; 
   atomic<int> nextID;  /**< next unique ID number for a worker */
+  /** shared among all threads */
+  const char *script = 0;
+  const char *cuda_arch = 0;
+  const char *jobe_runs = 0;
 
   ManagementData();
   int addWorker(Socket *sockp);

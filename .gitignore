@@ -17,3 +17,4 @@ example1/
 mpi_spmd/
 cuda_device_info/
 cuda_dim3Demo/
+test_execpdc.out

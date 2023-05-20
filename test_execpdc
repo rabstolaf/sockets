@@ -1,0 +1,6 @@
+#!/bin/bash
+
+for INFILE in trap-omp.cpp mpi_spmd.c cuda_device_info.cu cuda_dim3Demo.cu 
+do  echo ===== $INFILE
+    EXECPDC_SERVER=localhost ./execpdc input $INFILE
+done

@@ -42,5 +42,10 @@ string Config::valueOrEnv(const string& key, const char *envName) {
   if (envStr)
     return envStr;
   else
-    return at(key);
+    try {
+      return at(key);
+    } catch (exception & e) {
+      cerr << "no config key " << key << ", aborting" << endl;
+      throw e;
+    }
 }
