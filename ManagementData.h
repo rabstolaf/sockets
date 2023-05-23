@@ -2,6 +2,7 @@
    RAB 5/2/16 rev 12/22/17 */
 
 #include <atomic>
+#include <string>
 
 #define MAXWORKERS 10
 
@@ -25,9 +26,9 @@ class ManagementData {
   atomic<int> contin; 
   atomic<int> nextID;  /**< next unique ID number for a worker */
   /** shared among all threads */
-  const char *script = 0;
-  const char *cuda_arch = 0;
-  const char *jobe_runs = 0;
+  string script;
+  string cuda_arch;
+  string jobe_runs;
 
   ManagementData();
   int addWorker(Socket *sockp);

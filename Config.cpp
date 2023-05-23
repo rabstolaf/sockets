@@ -39,9 +39,10 @@ int MAIN() {
 
 string Config::valueOrEnv(const string& key, const char *envName) {
   char *envStr = getenv(envName);
-  if (envStr)
+  if (envStr) {
+    cout << "Using env variable " << envName << " with value " << envStr <<endl; // DEBUG
     return envStr;
-  else
+  } else
     try {
       return at(key);
     } catch (exception & e) {

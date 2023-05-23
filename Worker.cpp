@@ -87,8 +87,9 @@ void Worker::doWork(const ManagementData *mgt) {
     else if (strncmp(buff, "MSG ", 4) == 0) 
       doMSG(buff);
 
-    else if (strncmp(buff, "SCRIPT ", 7) == 0) 
+    else if (strncmp(buff, "SCRIPT ", 7) == 0) {
       doSCRIPT(buff, mgt);
+    }
 
     else 
       doUnknown(buff);     // unrecognized message type
@@ -145,7 +146,8 @@ void Worker::doSCRIPT(const char *buff, const ManagementData *mgt) {
       //      char *cmd = new char [MAXBUFF];
       string basename(buff+7);
       stringstream ss;
-      ss << mgt->script << " " << basename
+      ss << "cd " << mgt->jobe_runs << "; "
+	 << mgt->script << " " << basename
 	 << " > " << basename + ".out 2> " << basename + ".err";
       cout << ss.str().c_str() << endl;
       
