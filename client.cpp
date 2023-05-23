@@ -88,7 +88,7 @@ int main(int argc, char **argv) {
       ; /* outgoing message same as input message */
     else { // content of a message provided
       ss.str("");
-      ss << "SCRIPT " << buff;
+      ss << "EXECPDC " << buff;
       strcpy(buff, ss.str().c_str());
     }
     if ((ret = sock.send(buff, strlen(buff))) < 0)

@@ -87,8 +87,8 @@ void Worker::doWork(const ManagementData *mgt) {
     else if (strncmp(buff, "MSG ", 4) == 0) 
       doMSG(buff);
 
-    else if (strncmp(buff, "SCRIPT ", 7) == 0) {
-      doSCRIPT(buff, mgt);
+    else if (strncmp(buff, "EXECPDC ", 8) == 0) {
+      doEXECPDC(buff, mgt);
     }
 
     else 
@@ -128,26 +128,26 @@ void Worker::doMSG(const char *buff) {
       cout << "[" << id << "] sent acknowledgment" << endl;
 }
 
-/** Handle SCRIPT message */
-void Worker::doSCRIPT(const char *buff, const ManagementData *mgt) {
-      cout << buff+7 << endl << endl;
+/** Handle EXECPDC message */
+void Worker::doEXECPDC(const char *buff, const ManagementData *mgt) {
+      cout << buff+8 << endl << endl;
       
-      // buff+7 is filename of script input
+      // buff+8 is filename of do_run's input
       /*
       const int maxfile = 100000;
       char *inbuff = new char [maxfile];
       ifstream infile;
-      infile.open(buff+7, ios::in);
+      infile.open(buff+8, ios::in);
       infile.read(inbuff, maxfile-1);
       inbuff[infile.gcount()] = '\0';
       cout << inbuff << endl;
       */
 
       //      char *cmd = new char [MAXBUFF];
-      string basename(buff+7);
+      string basename(buff+8);
       stringstream ss;
       ss << "cd " << mgt->jobe_runs << "; "
-	 << mgt->script << " " << basename
+	 << mgt->do_run << " " << basename
 	 << " > " << basename + ".out 2> " << basename + ".err";
       cout << ss.str().c_str() << endl;
       

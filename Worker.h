@@ -34,7 +34,7 @@ class Worker : public thread {
   void doDONE(void);
   void doLABEL(const char *buff);
   void doMSG(const char *buff);
-  void doSCRIPT(const char *buff, const ManagementData*mgt);
+  void doEXECPDC(const char *buff, const ManagementData*mgt);
   void doUnknown(const char *buff);
 }; 
 

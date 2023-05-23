@@ -5,7 +5,7 @@
     @par Environment variables - override Config values if present
      - \c EXECPDC_PORT - overrides Config value for PORT for this server
      - \c EXECPDC_CUDA_ARCH - overrides Config value for CUDA_ARCH
-     - \c EXECPDC_SCRIPT - overrides Config value for SCRIPT
+     - \c EXECPDC_DO_RUN - overrides Config value for DO_RUN
 
     @par This program performs actions according to two kinds of input:
      - <em>services</em> are actions requested over a network connection
@@ -112,7 +112,7 @@ int main(int argc, char **argv) {
 
   /* Define shared data structure for controlling server */
   ManagementData mgt;
-  mgt.script = config.valueOrEnv("SCRIPT", "EXECPDC_SCRIPT").c_str();
+  mgt.do_run = config.valueOrEnv("DO_RUN", "EXECPDC_DO_RUN").c_str();
   mgt.cuda_arch = config.valueOrEnv("CUDA_ARCH", "EXECPDC_CUDA_ARCH").c_str();
   mgt.jobe_runs = config.valueOrEnv("JOBE_RUNS", "EXECPDC_JOBE_RUNS").c_str();
 

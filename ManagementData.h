@@ -26,7 +26,7 @@ class ManagementData {
   atomic<int> contin; 
   atomic<int> nextID;  /**< next unique ID number for a worker */
   /** shared among all threads */
-  string script;
+  string do_run;
   string cuda_arch;
   string jobe_runs;
 
