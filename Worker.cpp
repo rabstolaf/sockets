@@ -9,7 +9,7 @@
 #include <cstdlib>
 #include "Worker.h"
 
-int Worker::MAXBUFF = 200;
+int Worker::MAXBUFF = 2000;
 
 /** helper method
     @param str C-style string (null-terminated array of characters)
@@ -136,71 +136,80 @@ void Worker::doEXECPDC(const char *buff, const ManagementData *mgt) {
       /*
       const int maxfile = 100000;
       char *inbuff = new char [maxfile];
-      ifstream infile;
-      infile.open(buff+8, ios::in);
-      infile.read(inbuff, maxfile-1);
-      inbuff[infile.gcount()] = '\0';
+      ifstream tmpfile;
+      tmpfile.open(buff+8, ios::in);
+      tmpfile.read(inbuff, maxfile-1);
+      inbuff[tmpfile.gcount()] = '\0';
       cout << inbuff << endl;
       */
 
       //      char *cmd = new char [MAXBUFF];
-      string basename(buff+8);
-      stringstream ss;
-      ss << "cd " << mgt->jobe_runs << "; "
-	 << mgt->do_run << " " << basename
-	 << " > " << basename + ".out 2> " << basename + ".err";
-      cout << ss.str().c_str() << endl;
+      
+      stringstream ss(buff+8);
+      string workdir;
+      string infile;
+      ss >> workdir >> infile;
+      cout << "workdir infile:  " << ss.str() << endl; // DEBUG
+#define OFILENAME(ext) workdir + "/" + infile + ext
+      string outfile = OFILENAME(".out");
+      string errfile = OFILENAME(".err");
+
+      ss.str(""); ss.clear();
+      ss << "cd " << mgt->jobe_runs << ";  "
+	 << mgt->do_run << " " << workdir << " " << infile
+	 << " > " << outfile << " 2> " << errfile;
+      cout << "command to execute:  " << ss.str().c_str() << endl; //DEBUG
       
       int status = system(ss.str().c_str());
       cout << "exit status " << status << endl;
 
       // build and send response message 
       char *inbuff = new char [MAXBUFF];
-      ifstream infile;
+      ifstream tmpfile;
       if (status == 0) {
 	ss.str("SUCCESS ");  
-	infile.open(basename + ".out", ios::in);  // ERROR CHECK
-	if (infile && infile.peek() != istream::traits_type::eof()) {
+	tmpfile.open(outfile, ios::in);  // ERROR CHECK
+	if (tmpfile && tmpfile.peek() != istream::traits_type::eof()) {
 	  //ss << endl << "===== STANDARD OUTPUT ===== << endl";
-	  infile.read(inbuff, MAXBUFF-1);  // ERROR CHECK
-	  inbuff[infile.gcount()] = '\0';
+	  tmpfile.read(inbuff, MAXBUFF-1);  // ERROR CHECK
+	  inbuff[tmpfile.gcount()] = '\0';
 	  ss << inbuff;
-	  infile.close();
+	  tmpfile.close();
 	} else {
 	  //ss << endl << "===== NO STANDARD OUTPUT =====" << endl;
 	}	  
-	infile.open(basename + ".err", ios::in);  // ERROR CHECK
-	if (infile && infile.peek() != istream::traits_type::eof()) {
+	tmpfile.open(errfile, ios::in);  // ERROR CHECK
+	if (tmpfile && tmpfile.peek() != istream::traits_type::eof()) {
 	  // non-empty .err file
 	  ss << endl << "===== STANDARD ERROR =====" << endl;
-	  infile.read(inbuff, MAXBUFF-1);  // ERROR CHECK
-	  inbuff[infile.gcount()] = '\0';
+	  tmpfile.read(inbuff, MAXBUFF-1);  // ERROR CHECK
+	  inbuff[tmpfile.gcount()] = '\0';
 	  ss << inbuff;
-	  infile.close();
+	  tmpfile.close();
 	} else {
 	  //ss << endl << "===== NO STANDARD ERROR =====" << endl;
 	}
 	
       } else {
 	ss.str("ERROR ");  
-	infile.open(basename + ".out", ios::in);  // ERROR CHECK
-	if (infile && infile.peek() != istream::traits_type::eof()) {
+	tmpfile.open(outfile, ios::in);  // ERROR CHECK
+	if (tmpfile && tmpfile.peek() != istream::traits_type::eof()) {
 	  ss << endl << "===== STANDARD OUTPUT =====" << endl;
-	  infile.read(inbuff, MAXBUFF-1);  // ERROR CHECK
-	  inbuff[infile.gcount()] = '\0';
+	  tmpfile.read(inbuff, MAXBUFF-1);  // ERROR CHECK
+	  inbuff[tmpfile.gcount()] = '\0';
 	  ss << inbuff;
-	  infile.close();
+	  tmpfile.close();
 	} else {
 	  ss << endl << "===== NO STANDARD OUTPUT =====" << endl;
 	}	  
-	infile.open(basename + ".err", ios::in);  // ERROR CHECK
-	if (infile && infile.peek() != istream::traits_type::eof()) {
+	tmpfile.open(errfile, ios::in);  // ERROR CHECK
+	if (tmpfile && tmpfile.peek() != istream::traits_type::eof()) {
 	  // non-empty .err file
 	  ss << endl << "===== STANDARD ERROR =====" << endl;
-	  infile.read(inbuff, MAXBUFF-1);  // ERROR CHECK
-	  inbuff[infile.gcount()] = '\0';
+	  tmpfile.read(inbuff, MAXBUFF-1);  // ERROR CHECK
+	  inbuff[tmpfile.gcount()] = '\0';
 	  ss << inbuff;
-	  infile.close();
+	  tmpfile.close();
 	} else {
 	  ss << endl << "===== NO STANDARD ERROR =====" << endl;
 	}

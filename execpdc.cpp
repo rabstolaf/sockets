@@ -24,6 +24,7 @@ using namespace std;
 
 #define MAXBUFF 100000
 const char *label_env = "EXECPDC_LABEL";
+const char *inputfile_env = "EXECPDC_INPUTFILE";
 
 int main(int argc, char **argv) {
   char *prog = argv[0];
@@ -52,16 +53,21 @@ int main(int argc, char **argv) {
 
   const char *workdir = 0;
   const char *inputfile = 0;
-  if (argc < 3) {
+  if (argc < 2) {
     ss.str("");
-    ss << "Usage:  " << prog << " workdir inputfile [label]" << endl; 
+    ss << "Usage:  " << prog << " workdir [inputfile [label]]" << endl; 
     cerr << ss.str();
     log << ss.str();
     return 1;
   }
   workdir = argv[1];
-  inputfile = argv[2];
-  //cout << workdir << " " << inputfile << endl;
+  if (argc >2)
+    inputfile = argv[2];
+  if (inputfile == 0) 
+    inputfile = getenv(inputfile_env);
+  if (inputfile == 0)
+    inputfile = "EXECPDC_INPUT";
+  //cout << workdir << " " << inputfile << endl;  // DEBUG
 
   if (argc > 3) 
     label = argv[3];
@@ -69,7 +75,7 @@ int main(int argc, char **argv) {
     label = getenv(label_env);
   if (label == 0)
     label = workdir;
-  log << "orkdir=" << workdir << "  inputfile=" << inputfile
+  log << "workdir=" << workdir << "  inputfile=" << inputfile
       << "label=" << label << endl;
 
   Socket sock(host, port);
@@ -137,7 +143,7 @@ int main(int argc, char **argv) {
   */
   
   ss.str("");
-  ss << "EXECPDC " << workdir << "/" << inputfile;
+  ss << "EXECPDC " << workdir << " " << inputfile;
   strcpy(buff, ss.str().c_str());
   if ((ret = sock.send(buff, strlen(buff))) < 0)
     return 1;

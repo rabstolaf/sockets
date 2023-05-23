@@ -1,30 +1,38 @@
  #!/bin/bash
-# prototype backend interpreter for the PDC CPET receptacle
+# prototype backend interpreter for the Runestone Backend (RSBE) system
 # RAB 10/2020 (version 1) Demo on 10/20/20
+# further development May 2023
 PROG=`basename $0`
-USAGE="Usage:  $PROG [ infile ]
-where  infile (default standard input) has the following format:  
+USAGE="Usage:  $PROG workdir [ infile ] 
+where workdir is a subdirectory for performing the computation 
+      infile (default standard input), a file in workdir has this format:  
 	sta
 	jobname [count filename [build-command ...]]
 	[exec-command...]
 	[code]
 where the characters beginning with sta represent standard input.
-    sta  is a literal 3-letter code specifying that $PROG should be used
-    jobname  names the job being acted on
+    sta  is a code specifying the architecture that $PROG should use
+        options are:  omp (multicore), mpi,mpi4py (cluster), gpu (Cuda,OpenACC)
+    jobname  names the job being acted on - typically the same as workdir
     count, filename  are length of code and filename to store  code  into
 	If count is 0 or empty then ignore (dummy) filename and assume no code 
     build-command  is a shell command to compile or otherwise prepare filename
     exec-command  is shell command for executing the job (blank line = no exec)
     code  is the contents for filename, consisting of count bytes"
 
-cat $1 | {
+cd $1 || { 
+    echo "$PROG: could not change to subdirectory '$1', aborting"
+    exit 1
+}
+
+cat $2 | {
 
 read BACKEND ; test "$BACKEND" = "" && read BACKEND
 
 case "$BACKEND" in
-    sta|gpu) read JOBNAME COUNT FILENAME BUILD;; 
-    omp) read JOBNAME CORECT COUNT FILENAME BUILD;; 
-    mpi|mpi4py) read JOBNAME HOSTCT CORECT COUNT FILENAME BUILD;;
+    gpu) read JOBNAME COUNT FILENAME BUILD;; 
+    omp) read JOBNAME NCORES COUNT FILENAME BUILD;; 
+    mpi|mpi4py) read JOBNAME NHOSTS NCORES COUNT FILENAME BUILD;;
     *) echo "$PROG: first line is '$BACKEND'"
        echo "Unrecognized backend value, aborting"
        exit 1;;
@@ -33,14 +41,14 @@ esac
 test -z "$JOBNAME" && { echo "$USAGE" ; exit 1 ; }
 read EXEC
 
-test -d $JOBNAME || mkdir -p $JOBNAME || {
-    echo "$PROG: could not create subdirectory $JOBNAME, aborting"
-    exit 1
-}
-cd $JOBNAME || { 
-    echo "$PROG: could not change to subdirectory $JOBNAME, aborting"
-    exit 1
-}
+#test -d $JOBNAME || mkdir -p $JOBNAME || {
+#    echo "$PROG: could not create subdirectory $JOBNAME, aborting"
+#    exit 1
+#}
+#cd $JOBNAME || { 
+#    echo "$PROG: could not change to subdirectory $JOBNAME, aborting"
+#    exit 1
+#}
 
 case "$COUNT" in 
     ""|0) ;;
