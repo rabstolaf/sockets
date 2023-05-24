@@ -1,10 +1,14 @@
 #!/bin/bash
 SAVE=true    # assign true to preserve workdirs
 
-INPUTDIR=`pwd -P`/input
-test -s "$EXECPDC_JOBE_RUNS" ||
-    eval `grep EXECPDC_JOBE_RUNS execpdc.config`
-cd "$EXECPDC_JOBE_RUNS"
+BINDIR=`pwd -P`
+INPUTDIR=$BINDIR/input
+if test -s "$EXECPDC_JOBE_RUNS"
+then cd "$EXECPDC_JOBE_RUNS"
+else eval `grep JOBE_RUNS execpdc.config`
+     cd $JOBE_RUNS
+fi
+pwd
 
 for INFILE in trap-omp.cpp mpi_spmd.c cuda_device_info.cu cuda_dim3Demo.cu 
 do  echo ===== $INFILE
@@ -14,7 +18,7 @@ do  echo ===== $INFILE
 	exit 1
     }
     cp $INPUTDIR/$INFILE $WORKDIR/EXECPDC_INPUT
-    EXECPDC_SERVER=localhost ./execpdc $WORKDIR EXECPDC_INPUT
+    EXECPDC_SERVER=localhost $BINDIR/execpdc $WORKDIR EXECPDC_INPUT
     echo ""
     $SAVE || rm -rf $WORKDIR
 done

@@ -45,8 +45,9 @@ int main(int argc, char **argv) {
   time_t now = chrono::system_clock::to_time_t(chrono::system_clock::now());
   log << endl << "===== " << ctime(&now) << endl;
 
-  const char *config_filename = "execpdc.config"; // GENERALIZE
-  Config config(config_filename);
+  string config_filename(prog); // GENERALIZE?
+  config_filename += ".config";
+  Config config(config_filename.c_str());
   host = config.valueOrEnv("SERVER", "EXECPDC_SERVER").c_str();
   port = atoi(config.valueOrEnv("PORT", "EXECPDC_PORT").c_str());
   // cout << host << " " << port << endl;

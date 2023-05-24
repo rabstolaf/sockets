@@ -166,6 +166,8 @@ void Worker::doEXECPDC(const char *buff, const ManagementData *mgt) {
       // build and send response message 
       char *inbuff = new char [MAXBUFF];
       ifstream tmpfile;
+      outfile.insert(0, mgt->jobe_runs + "/");
+      errfile.insert(0, mgt->jobe_runs + "/");
       if (status == 0) {
 	ss.str("SUCCESS ");  
 	tmpfile.open(outfile, ios::in);  // ERROR CHECK
