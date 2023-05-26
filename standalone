@@ -4,7 +4,7 @@
 # further development May 2023
 PROG=`basename $0`
 USAGE="Usage:  $PROG workdir [ infile ] 
-where workdir is a subdirectory for performing the computation 
+where workdir is an existing subdirectory for performing the computation
       infile (default standard input), a file in workdir has this format:  
 	sta
 	jobname [count filename [build-command ...]]
@@ -12,7 +12,7 @@ where workdir is a subdirectory for performing the computation
 	[code]
 where the characters beginning with sta represent standard input.
     sta  is a code specifying the architecture that $PROG should use
-        options are:  omp (multicore), mpi,mpi4py (cluster), gpu (Cuda,OpenACC)
+        options are:  omp (multicore), mpi,mpi4py (cluster), gpu (CUDA,OpenACC)
     jobname  names the job being acted on - typically the same as workdir
     count, filename  are length of code and filename to store  code  into
 	If count is 0 or empty then ignore (dummy) filename and assume no code 

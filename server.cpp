@@ -93,11 +93,17 @@ using namespace std;
 void doCommands(ManagementData *mgtp, int port);
 
 int main(int argc, char **argv) {
-  //char *prog = argv[0];
+  char *prog = argv[0];
   int port;
 
   const char *config_filename = "execpdc.config"; // GENERALIZE
-  Config config(config_filename);
+  Config config;
+  try {
+    config.processFile(config_filename);
+  } catch (runtime_error &e) {
+    cerr << prog << ":  " << e.what() << "; aborting" << endl;
+    return 1;
+  }
   port = atoi(config.valueOrEnv("PORT", "EXECPDC_PORT").c_str());
 
   ServerSocket ssock(port);
@@ -115,6 +121,7 @@ int main(int argc, char **argv) {
   mgt.do_run = config.valueOrEnv("DO_RUN", "EXECPDC_DO_RUN").c_str();
   mgt.cuda_arch = config.valueOrEnv("CUDA_ARCH", "EXECPDC_CUDA_ARCH").c_str();
   mgt.jobe_runs = config.valueOrEnv("JOBE_RUNS", "EXECPDC_JOBE_RUNS").c_str();
+  mgt.addfacl = config.valueOrEnv("ADDFACL", "EXECPDC_ADDFACL").c_str();
 
   /* Create a thread for handling command input */
   thread commandThread(doCommands, &mgt, port);

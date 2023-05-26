@@ -29,6 +29,7 @@ class ManagementData {
   string do_run;
   string cuda_arch;
   string jobe_runs;
+  string addfacl;
 
   ManagementData();
   int addWorker(Socket *sockp);

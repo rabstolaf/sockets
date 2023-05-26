@@ -109,7 +109,7 @@ int Socket::connect(const char *host, int port) {
   struct hostent *hp;
   struct sockaddr_in sa;
   if ((hp = gethostbyname(host)) == NULL) {
-    cerr << "Socket::connect() gethostbyname() " << strerror(errno) << endl;
+    cerr << "Socket::connect() gethostbyname(" << host << ") " << hstrerror(h_errno) << endl;
     return 0;
   }
   memset((char *) &sa, '\0', sizeof(sa));

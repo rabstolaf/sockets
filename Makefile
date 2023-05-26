@@ -2,7 +2,7 @@
 
 CFLAGS = -Wall -std=c++11
 
-all: sender receiver client server execpdc # sender2 receiver2 
+all: sender receiver client server execpdc # addfacl # sender2 receiver2 
 
 Socket.o:  Socket.cpp Socket.h
 	g++ $(CFLAGS) -c Socket.cpp
@@ -45,21 +45,21 @@ CLIENT_OBJS = client.o Socket.o Config.o
 client: $(CLIENT_OBJS)
 	g++ $(CFLAGS) -o client $(CLIENT_OBJS)
 
-client.o:  client.cpp Socket.h
+client.o:  client.cpp Socket.h Config.h
 	g++ $(CFLAGS) -c client.cpp
 
 EXECPDC_OBJS = execpdc.o Socket.o Config.o
 execpdc: $(EXECPDC_OBJS)
 	g++ $(CFLAGS) -o execpdc $(EXECPDC_OBJS)
 
-execpdc.o:  execpdc.cpp Socket.h execpdc.config
+execpdc.o:  execpdc.cpp Socket.h Config.h execpdc.config
 	g++ $(CFLAGS) -c execpdc.cpp
 
 SERVER_OBJS = server.o Socket.o Worker.o ManagementData.o Config.o
 server: $(SERVER_OBJS)
 	g++ $(CFLAGS) -pthread -o server $(SERVER_OBJS)
 
-server.o:  server.cpp Socket.h ManagementData.h Worker.h
+server.o:  server.cpp Socket.h ManagementData.h Worker.h Config.h
 	g++ $(CFLAGS) -c server.cpp
 
 Worker.o: Worker.cpp Socket.h ManagementData.h Worker.h 
@@ -73,3 +73,16 @@ tarball:
 
 clean:
 	rm -rf sender receiver client execpdc server *.o
+
+# no longer in use - addfacl setuid doesn't give enough privileges for setfacl
+# addfacl.cpp moved to Archive subdir
+
+addfacl: addfacl.o
+	g++ $(CFLAGS) -o addfacl addfacl.o
+	sudo chown www-data addfacl
+	#sudo chgrp www-data addfacl
+	sudo chmod u+s addfacl
+	sudo chmod o-rwx addfacl
+
+addfacl.o:  addfacl.cpp
+	g++ $(CFLAGS) -c addfacl.cpp

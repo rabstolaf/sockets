@@ -7,6 +7,7 @@
 #include <string>
 #include <fstream>
 #include <cstdlib>
+#include <unistd.h>
 #include "Worker.h"
 
 int Worker::MAXBUFF = 2000;
@@ -150,24 +151,44 @@ void Worker::doEXECPDC(const char *buff, const ManagementData *mgt) {
       string infile;
       ss >> workdir >> infile;
       cout << "workdir infile:  " << ss.str() << endl; // DEBUG
+
+      int retval;
+      if ((retval = chdir(mgt->jobe_runs.c_str())) < 0) {
+	cerr << workdir << " worker:  chdir() failed, aborting: " 
+	     << strerror(errno) << endl;
+	return;
+      }
 #define OFILENAME(ext) workdir + "/" + infile + ext
       string outfile = OFILENAME(".out");
       string errfile = OFILENAME(".err");
 
       ss.str(""); ss.clear();
-      ss << "cd " << mgt->jobe_runs << ";  "
-	 << mgt->do_run << " " << workdir << " " << infile
-	 << " > " << outfile << " 2> " << errfile;
+      ss << mgt->do_run + " " + workdir + " " + infile
+	 << " > " << outfile + " 2> " + errfile;
       cout << "command to execute:  " << ss.str().c_str() << endl; //DEBUG
-      
-      int status = system(ss.str().c_str());
+
+      // DEBUG:
+      string wkdir("ls -ld ");
+      wkdir += workdir + "; getfacl " + workdir
+	+ "; " + mgt->addfacl +" " + workdir + " rab; getfacl " + workdir;
+      int debug = system(wkdir.c_str());
+      cout << "ls wkdir status " << debug << endl;
+      system("id > /tmp/rab.tmp");
+      string rabtmp("id");
+      system((rabtmp + " > " + workdir + "/rab.tmp").c_str());
+
+      //int status = system(ss.str().c_str());
+      int status = system(ss.str().insert(0,"cat /tmp/rab.tmp; ").c_str()); // DEBUG
       cout << "exit status " << status << endl;
 
       // build and send response message 
       char *inbuff = new char [MAXBUFF];
       ifstream tmpfile;
-      outfile.insert(0, mgt->jobe_runs + "/");
-      errfile.insert(0, mgt->jobe_runs + "/");
+      /*
+      string abs_prefix = mgt->jobe_runs + "/" ;
+      outfile.insert(0, abs_prefix);
+      errfile.insert(0, abs_prefix);
+      */
       if (status == 0) {
 	ss.str("SUCCESS ");  
 	tmpfile.open(outfile, ios::in);  // ERROR CHECK
@@ -222,6 +243,7 @@ void Worker::doEXECPDC(const char *buff, const ManagementData *mgt) {
       sockp->send(ss.str().c_str(), strlen(ss.str().c_str()));
       cout << "[" << id << "] sent " << strlen(ss.str().c_str())
 	   << " byte response"<< endl;
+      return;
 }
 
 /** Handle unknown message */

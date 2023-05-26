@@ -28,7 +28,7 @@ const char *inputfile_env = "EXECPDC_INPUTFILE";
 
 int main(int argc, char **argv) {
   char *prog = argv[0];
-  const char *host;
+  string host;
   int port;
   const char *label = 0;
   int ret;  /* return value from a call */
@@ -47,10 +47,16 @@ int main(int argc, char **argv) {
 
   string config_filename(prog); // GENERALIZE?
   config_filename += ".config";
-  Config config(config_filename.c_str());
-  host = config.valueOrEnv("SERVER", "EXECPDC_SERVER").c_str();
-  port = atoi(config.valueOrEnv("PORT", "EXECPDC_PORT").c_str());
-  // cout << host << " " << port << endl;
+  Config config;
+  try {
+    config.processFile(config_filename.c_str());
+    host = config.valueOrEnv("SERVER", "EXECPDC_SERVER").c_str();
+    port = atoi(config.valueOrEnv("PORT", "EXECPDC_PORT").c_str());
+  } catch (exception &e) {
+    cerr << prog << ":  " << e.what() << "; aborting" << endl;
+    return 1;
+  }
+  //cout << config["SERVER"] << " " << host << " " << port << endl;
 
   const char *workdir = 0;
   const char *inputfile = 0;
@@ -79,7 +85,7 @@ int main(int argc, char **argv) {
   log << "workdir=" << workdir << "  inputfile=" << inputfile
       << "label=" << label << endl;
 
-  Socket sock(host, port);
+  Socket sock(host.c_str(), port);
   if (sock.isConnected()) 
     log << "Connected." << endl;
   else {

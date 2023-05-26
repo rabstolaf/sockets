@@ -20,14 +20,20 @@ const char *label_env = "CLIENT_LABEL";
 const char *default_label = "Client";
 
 int main(int argc, char **argv) {
-  //  char *prog = argv[0];
-  const char *host;
+  char *prog = argv[0];
+  string host;
   int port;
   const char *label = 0;
   int ret;  /* return value from a call */
 
   const char *config_filename = "execpdc.config"; // GENERALIZE
-  Config config(config_filename);
+  Config config;
+  try {
+    config.processFile(config_filename);
+  } catch (runtime_error &e) {
+    cerr << prog << ":  " << e.what() << "; aborting" << endl;
+    return 1;
+  }
   host = config.valueOrEnv("SERVER", "EXECPDC_SERVER").c_str();
   port = atoi(config.valueOrEnv("PORT", "EXECPDC_PORT").c_str());
   cout << host << " " << port << endl;
@@ -38,7 +44,7 @@ int main(int argc, char **argv) {
     label = default_label;
   cout << "Label: " << label << endl;
 
-  Socket sock(host, port);
+  Socket sock(host.c_str(), port);
   if (sock.isConnected()) 
     cout << "Connected." << endl;
   else {
