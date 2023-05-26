@@ -131,26 +131,13 @@ void Worker::doMSG(const char *buff) {
 
 /** Handle EXECPDC message */
 void Worker::doEXECPDC(const char *buff, const ManagementData *mgt) {
-      cout << buff+8 << endl << endl;
-      
-      // buff+8 is filename of do_run's input
-      /*
-      const int maxfile = 100000;
-      char *inbuff = new char [maxfile];
-      ifstream tmpfile;
-      tmpfile.open(buff+8, ios::in);
-      tmpfile.read(inbuff, maxfile-1);
-      inbuff[tmpfile.gcount()] = '\0';
-      cout << inbuff << endl;
-      */
-
-      //      char *cmd = new char [MAXBUFF];
+  // cout << buff+8 << endl << endl; // DEBUG
       
       stringstream ss(buff+8);
       string workdir;
       string infile;
       ss >> workdir >> infile;
-      cout << "workdir infile:  " << ss.str() << endl; // DEBUG
+      // cout << "workdir infile:  " << ss.str() << endl; // DEBUG
 
       int retval;
       if ((retval = chdir(mgt->jobe_runs.c_str())) < 0) {
@@ -165,30 +152,15 @@ void Worker::doEXECPDC(const char *buff, const ManagementData *mgt) {
       ss.str(""); ss.clear();
       ss << mgt->do_run + " " + workdir + " " + infile
 	 << " > " << outfile + " 2> " + errfile;
-      cout << "command to execute:  " << ss.str().c_str() << endl; //DEBUG
+      // cout << "command to execute:  " << ss.str().c_str() << endl; //DEBUG
 
-      // DEBUG:
-      string wkdir("ls -ld ");
-      wkdir += workdir + "; getfacl " + workdir
-	+ "; " + mgt->addfacl +" " + workdir + " rab; getfacl " + workdir;
-      int debug = system(wkdir.c_str());
-      cout << "ls wkdir status " << debug << endl;
-      system("id > /tmp/rab.tmp");
-      string rabtmp("id");
-      system((rabtmp + " > " + workdir + "/rab.tmp").c_str());
-
-      //int status = system(ss.str().c_str());
-      int status = system(ss.str().insert(0,"cat /tmp/rab.tmp; ").c_str()); // DEBUG
+      cout << "performing PDC computation..." << endl;
+      int status = system(ss.str().c_str());
       cout << "exit status " << status << endl;
 
       // build and send response message 
       char *inbuff = new char [MAXBUFF];
       ifstream tmpfile;
-      /*
-      string abs_prefix = mgt->jobe_runs + "/" ;
-      outfile.insert(0, abs_prefix);
-      errfile.insert(0, abs_prefix);
-      */
       if (status == 0) {
 	ss.str("SUCCESS ");  
 	tmpfile.open(outfile, ios::in);  // ERROR CHECK

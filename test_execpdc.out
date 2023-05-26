@@ -1,0 +1,34 @@
+===== trap-omp.cpp
+OMP defined, threadct = 8
+With n = 1048576 trapezoids, our estimate of the integral from 0 to 3.14159 is 2
+
+===== mpi_spmd.c
+Greetings from process #1 of 4 on csinparallel
+Greetings from process #2 of 4 on csinparallel
+Greetings from process #3 of 4 on csinparallel
+Greetings from process #0 of 4 on csinparallel
+
+===== cuda_device_info.cu
+Device 0: "Quadro P2200" with Compute 6.1 capability
+Total amount of global memory:      5053 MBytes (5298716672 bytes)
+GPU device shared memory per block of threads on an SM: 49152 bytes
+GPU device total number of streaming multiprocessors: 10
+With  10 Multiprocessors (MPs), this device has 128 CUDA Cores/MP,
+ for total of  1280 CUDA Cores on this device.
+
+Max dimension sizes of a grid (x,y,z): (2147483647, 65535, 65535)
+Max dimension sizes of a thread block (x,y,z): (1024, 1024, 64)
+
+===== cuda_dim3Demo.cu
+Grid Dimensions : {1, 1, 1} blocks. 
+Block Dimensions : {8, 1, 1} threads.
+From each thread:
+I am thread (0, 0, 0) of block (0, 0, 0) in the grid
+I am thread (1, 0, 0) of block (0, 0, 0) in the grid
+I am thread (2, 0, 0) of block (0, 0, 0) in the grid
+I am thread (3, 0, 0) of block (0, 0, 0) in the grid
+I am thread (4, 0, 0) of block (0, 0, 0) in the grid
+I am thread (5, 0, 0) of block (0, 0, 0) in the grid
+I am thread (6, 0, 0) of block (0, 0, 0) in the grid
+I am thread (7, 0, 0) of block (0, 0, 0) in the grid
+

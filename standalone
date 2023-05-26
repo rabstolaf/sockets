@@ -4,14 +4,14 @@
 # further development May 2023
 PROG=`basename $0`
 USAGE="Usage:  $PROG workdir [ infile ] 
-where workdir is an existing subdirectory for performing the computation
+where workdir is a pre-existing subdirectory for performing the computation
       infile (default standard input), a file in workdir has this format:  
-	sta
+	backend
 	jobname [count filename [build-command ...]]
 	[exec-command...]
 	[code]
-where the characters beginning with sta represent standard input.
-    sta  is a code specifying the architecture that $PROG should use
+where the characters beginning with CODE represent standard input.
+    backend  is a code specifying the architecture that $PROG should use
         options are:  omp (multicore), mpi,mpi4py (cluster), gpu (CUDA,OpenACC)
     jobname  names the job being acted on - typically the same as workdir
     count, filename  are length of code and filename to store  code  into
@@ -40,15 +40,6 @@ esac
 
 test -z "$JOBNAME" && { echo "$USAGE" ; exit 1 ; }
 read EXEC
-
-#test -d $JOBNAME || mkdir -p $JOBNAME || {
-#    echo "$PROG: could not create subdirectory $JOBNAME, aborting"
-#    exit 1
-#}
-#cd $JOBNAME || { 
-#    echo "$PROG: could not change to subdirectory $JOBNAME, aborting"
-#    exit 1
-#}
 
 case "$COUNT" in 
     ""|0) ;;

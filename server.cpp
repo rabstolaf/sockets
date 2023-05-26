@@ -121,7 +121,6 @@ int main(int argc, char **argv) {
   mgt.do_run = config.valueOrEnv("DO_RUN", "EXECPDC_DO_RUN").c_str();
   mgt.cuda_arch = config.valueOrEnv("CUDA_ARCH", "EXECPDC_CUDA_ARCH").c_str();
   mgt.jobe_runs = config.valueOrEnv("JOBE_RUNS", "EXECPDC_JOBE_RUNS").c_str();
-  mgt.addfacl = config.valueOrEnv("ADDFACL", "EXECPDC_ADDFACL").c_str();
 
   /* Create a thread for handling command input */
   thread commandThread(doCommands, &mgt, port);

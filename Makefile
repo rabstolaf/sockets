@@ -74,8 +74,8 @@ tarball:
 clean:
 	rm -rf sender receiver client execpdc server *.o
 
-# no longer in use - addfacl setuid doesn't give enough privileges for setfacl
-# addfacl.cpp moved to Archive subdir
+# no longer in use - addfacl setuid root doesn't give enough privileges for 
+# setfacl.  addfacl.cpp moved to Archive subdir
 
 addfacl: addfacl.o
 	g++ $(CFLAGS) -o addfacl addfacl.o

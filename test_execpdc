@@ -1,12 +1,16 @@
 #!/bin/bash
+# perform some test runs of execpdc from command line
 SAVE=false    # assign true to preserve workdirs
 
 BINDIR=`pwd -P`
 INPUTDIR=$BINDIR/input
 if test -s "$EXECPDC_JOBE_RUNS"
 then cd "$EXECPDC_JOBE_RUNS"
-else eval `grep JOBE_RUNS execpdc.config`
-     cd $JOBE_RUNS
+else eval `grep -m 1 JOBE_RUNS execpdc.config || echo false` &&
+	cd $JOBE_RUNS || {
+	    echo "JOBE_RUNS not defined in execpdc.config, aborting"
+	    exit 1
+	}
 fi
 
 for INFILE in trap-omp.cpp mpi_spmd.c cuda_device_info.cu cuda_dim3Demo.cu 

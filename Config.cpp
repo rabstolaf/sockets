@@ -29,7 +29,7 @@ void Config::processFile(const char *filename) {
 string Config::valueOrEnv(const char *key, const char *envName) {
   char *envStr = getenv(envName);
   if (envStr) {
-    cout << "Using env variable " << envName << " with value " << envStr <<endl; // DEBUG
+    //cout << "Using env variable " << envName << " with value " << envStr <<endl; // DEBUG
     return envStr;
   } else
     try {

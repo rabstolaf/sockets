@@ -131,25 +131,7 @@ int main(int argc, char **argv) {
     log << "LABEL message acknowledged " << buff << endl;
   }
 
-  /* cout << "Enter a one-line message to send (max " << MAXBUFF-1 << 
-     " chars), or DONE to quit" << endl; */
-  /*
-  if (!cin.getline(buff, MAXBUFF)) {
-    msg = "Error or end of input -- aborting";
-    cerr << msg << endl;
-    log << msg << endl;
-    return 1;
-  }
-  if (strcmp(buff, "DONE") == 0)
-    ; // outgoing message same as input message 
-  else { // content of a message provided 
-    ss.str("");
-    ss << "EXECPDC " << buff;
-    strcpy(buff, ss.str().c_str());
-  }
-  */
-  
-  ss.str("");
+  ss.str(""); 
   ss << "EXECPDC " << workdir << " " << inputfile;
   strcpy(buff, ss.str().c_str());
   if ((ret = sock.send(buff, strlen(buff))) < 0)
@@ -165,20 +147,6 @@ int main(int argc, char **argv) {
     log << ss.str();
     cout << buff;
   }
-
-  /*  if ((ret = sock.send("DONE", 4)) < 0)
-    return 1;
-  log << "DONE message sent" << endl;
-
-  if ((ret = sock.recv(buff, MAXBUFF-1)) < 0) {
-    msg = "Could not receive response from DONE message - send() failed";
-    cerr <<  msg << endl;
-    log << msg << endl;
-    return 1;
-  } 
-  buff[ret] = '\0';
-  log << "DONE message acknowledged: " << buff << endl;
-  */
 
   log << "sending END message" << endl;
   sock.send("END", 3);
