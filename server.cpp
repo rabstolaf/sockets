@@ -4,8 +4,9 @@
     @par No command line args  
     @par Environment variables - override Config values if present
      - \c EXECPDC_PORT - overrides Config value for PORT for this server
-     - \c EXECPDC_CUDA_ARCH - overrides Config value for CUDA_ARCH
      - \c EXECPDC_DO_RUN - overrides Config value for DO_RUN
+     - \c EXECPDC_JOBE_DIR - overrides Config value for JOBE_DIR
+     - \c EXECPDC_CUDA_ARCH - overrides Config value for CUDA_ARCH
 
     @par This program performs actions according to two kinds of input:
      - <em>services</em> are actions requested over a network connection
@@ -44,7 +45,7 @@
 
      - <strong><em>Service operation</em></strong>\n
        Prerequisite: <em>Client initialization</em>\n
-       Predefined services:  
+       Services:  
        - \c LABEL - set client thread's label within Server
          -# Client sends message \c LABEL followed by text
          -# Server assigns that text as that client thread's label, then \n
@@ -59,7 +60,12 @@
        - \c DONE - request Server to send a DONE message to Client
          -# Client sends message \c DONE
          -# Server sends \c DONE message to Client
-
+       - \c EXECPDC - request to carry out backend PDC computation
+         -# Client sends message \c EXECPDC followed by a unique workdir name and filename for desired compn
+         -# Server prints that text, then \n
+	    Server sends \c SUCCESS or \c ERROR message to Client, with stdin/stout from the PDC computation
+	 -# Client receives that \c SUCCESS or \c ERROR message
+       
      - <strong><em>Client termination</em></strong>\n
        Prerequisite:  Server has already sent DONE message to Client
        -# Client sends \c END message to Server
@@ -120,7 +126,7 @@ int main(int argc, char **argv) {
   ManagementData mgt;
   mgt.do_run = config.valueOrEnv("DO_RUN", "EXECPDC_DO_RUN").c_str();
   mgt.cuda_arch = config.valueOrEnv("CUDA_ARCH", "EXECPDC_CUDA_ARCH").c_str();
-  mgt.jobe_runs = config.valueOrEnv("JOBE_RUNS", "EXECPDC_JOBE_RUNS").c_str();
+  mgt.jobe_dir = config.valueOrEnv("JOBE_DIR", "EXECPDC_JOBE_DIR").c_str();
 
   /* Create a thread for handling command input */
   thread commandThread(doCommands, &mgt, port);

@@ -1,5 +1,5 @@
  #!/bin/bash
-# prototype backend interpreter for the Runestone Backend (RSBE) system
+# backend computation for the Runestone Backend (RSBE) system on local machine
 # RAB 10/2020 (version 1) Demo on 10/20/20
 # further development May 2023
 PROG=`basename $0`
@@ -30,9 +30,9 @@ cat $2 | {
 read BACKEND ; test "$BACKEND" = "" && read BACKEND
 
 case "$BACKEND" in
-    gpu) read JOBNAME COUNT FILENAME BUILD;; 
     omp) read JOBNAME NCORES COUNT FILENAME BUILD;; 
     mpi|mpi4py) read JOBNAME NHOSTS NCORES COUNT FILENAME BUILD;;
+    gpu) read JOBNAME COUNT FILENAME BUILD;; 
     *) echo "$PROG: first line is '$BACKEND'"
        echo "Unrecognized backend value, aborting"
        exit 1;;

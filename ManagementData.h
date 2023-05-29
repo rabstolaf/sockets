@@ -28,7 +28,7 @@ class ManagementData {
   /** shared among all threads */
   string do_run;
   string cuda_arch;
-  string jobe_runs;
+  string jobe_dir;
 
   ManagementData();
   int addWorker(Socket *sockp);

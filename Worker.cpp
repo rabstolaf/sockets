@@ -140,7 +140,7 @@ void Worker::doEXECPDC(const char *buff, const ManagementData *mgt) {
       // cout << "workdir infile:  " << ss.str() << endl; // DEBUG
 
       int retval;
-      if ((retval = chdir(mgt->jobe_runs.c_str())) < 0) {
+      if ((retval = chdir(mgt->jobe_dir.c_str())) < 0) {
 	cerr << workdir << " worker:  chdir() failed, aborting: " 
 	     << strerror(errno) << endl;
 	return;
