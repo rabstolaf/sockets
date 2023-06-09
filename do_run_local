@@ -20,6 +20,8 @@ where the characters beginning with CODE represent standard input.
     exec-command  is shell command for executing the job (blank line = no exec)
     code  is the contents for filename, consisting of count bytes"
 
+PATH=/opt/nvidia/hpc_sdk/Linux_x86_64/2023/compilers/bin:$PATH
+
 cd $1 || { 
     echo "$PROG: could not change to subdirectory '$1', aborting"
     exit 1
