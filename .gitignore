@@ -19,3 +19,4 @@ cuda_device_info/
 cuda_dim3Demo/
 #test_execpdc.out
 execpdc_*
+pid_server

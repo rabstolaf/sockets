@@ -92,6 +92,7 @@
 #include <sstream>
 #include <cstring>
 #include <thread>
+#include <unistd.h>
 #include "Config.h"
 #include "Worker.h"
 using namespace std;
@@ -101,6 +102,17 @@ void doCommands(ManagementData *mgtp, int port);
 int main(int argc, char **argv) {
   char *prog = argv[0];
   int port;
+
+  try {
+    ofstream pidstream("pid_server", ofstream::out);
+    pidstream << (int) getpid() << endl;
+    pidstream.close();
+  } catch (exception &e) {
+    cerr << prog << ":  " << e.what() << endl
+	 << "when attempting to write pid to file; aborting" << endl;
+    return 1;
+  }
+    
 
   const char *config_filename = "execpdc.config"; // GENERALIZE
   Config config;
