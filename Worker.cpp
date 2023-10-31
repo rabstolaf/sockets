@@ -72,6 +72,16 @@ void Worker::doWork(const ManagementData *mgt) {
   while (strcmp(buff, "DONE") != 0 && strcmp(buff, "END") != 0) {
     ret = sockp->recv(buff, MAXBUFF-1);
 
+    if (ret <= 0) {
+      if (ret < 0)
+	cout << "[" << id << "] Error receiving message, aborting" << endl;
+      else
+	cout << "[" << id << "] Received empty message, aborting" << endl;
+      buff[0] = '\0';
+      state = DONE;
+      break;
+    }
+
     buff[ret] = '\0';  // add terminating nullbyte to received array of char
     cout << "[" << id << "] Received message (" << ret << " chars):" << endl 
 	 << buff << endl;
@@ -96,6 +106,7 @@ void Worker::doWork(const ManagementData *mgt) {
       doUnknown(buff);     // unrecognized message type
 
   }
+  
   if (strcmp(buff, "END") != 0) {
     // receive END message from client
     if ((ret = sockp->recv(buff, MAXBUFF-1)) != -1) {
